@@ -1,152 +1,135 @@
-board = [\' \' for x in range(10)]
- 
- 
-def insertBoard(letter, pos):
-    global board
-    board[pos] = letter
- 
- 
-def spaceIsFree(pos):
-    return board[pos] == \' \'
- 
- 
-def isWinner(bo, le):
-    # Given a board and a player’s letter, this function returns True if that player has won.
-    # We use bo instead of board and le instead of letter so we don’t have to type as much.
-    return ((bo[7] == le and bo[8] == le and bo[9] == le) or # across the top
-    (bo[4] == le and bo[5] == le and bo[6] == le) or # across the middle
-    (bo[1] == le and bo[2] == le and bo[3] == le) or # across the bottom
-    (bo[7] == le and bo[4] == le and bo[1] == le) or # down the left side
-    (bo[8] == le and bo[5] == le and bo[2] == le) or # down the middle
-    (bo[9] == le and bo[6] == le and bo[3] == le) or # down the right side
-    (bo[7] == le and bo[5] == le and bo[3] == le) or # diagonal
-    (bo[9] == le and bo[5] == le and bo[1] == le)) # diagonal
- 
- 
-def playerMove():
-    run = True
-    while run:
-        move = input(\'Please select a position to place an \\\'X\\\' (1-9): \')
-        try:
-            move  = int(move)
-            if move > 0 and move < 10:
-                if spaceIsFree(move):
-                    run = False
-                    insertBoard(\'X\', move)
-                else:
-                    print(\'This postion is already occupied!\')
-            else:
-                print(\'Please type a number within the range!\')
-        except:
-            print(\'Please type a number!\')
-       
- 
-def selectRandom(li):
-    import random
-    ln = len(li)
-    r = random.randrange(0, ln)
-    return li[r]
-   
- 
-def compMove():
-    possibleMoves = [x for x, letter in enumerate(board) if letter == \' \' and x != 0]
-    move = 0
-   
-    #Check for possible winning move to take or to block opponents winning move
-    for let in [\'O\',\'X\']:
-        for i in possibleMoves:
-            boardCopy = board[:]
-            boardCopy[i] = let
-            if isWinner(boardCopy, let):
-                move = i
-                return move
- 
- 
-    #Try to take one of the corners
-    cornersOpen = []
-    for i in possibleMoves:
-        if i in [1,3,7,9]:
-            cornersOpen.append(i)
-    if len(cornersOpen) > 0:
-        move = selectRandom(cornersOpen)
-        return move
-   
-    #Try to take the center
-    if 5 in possibleMoves:
-        move = 5
-        return move
- 
-    #Take any edge
-    edgesOpen = []
-    for i in possibleMoves:
-        if i in [2,4,6,8]:
-            edgesOpen.append(i)
- 
-    if len(edgesOpen) > 0:
-        move = selectRandom(edgesOpen)
- 
-    return move
- 
- 
-def isBoardFull(board):
-    if board.count(\' \') > 1:
+board = [' ' for x in range(10)] 
+chess = ['O','X']
+def input_letter(letter,position): 
+    board[position] = letter
+
+def chooseOX():
+    print("你想要當Ｏ還是Ｘ？")
+    a = input()
+    if a=='O':
+        chess[0] = 'O'
+        chess[1] = 'X'
+    else:
+        chess[0] = 'X'
+        chess[1] = 'O'
+def printboard(board):
+    print("   |   |")
+    print(" " + board[1] + " | " + board[2] + " | " + board[3] )
+    print("   |   |")
+    print("------------")
+    print("   |   |")
+    print(" " + board[4] + " | " + board[5] + " | " + board[6] )
+    print("   |   |")
+    print("------------")
+    print("   |   |")
+    print(" " + board[7] + " | " + board[8] + " | " + board[9] )
+    print("   |   |")
+
+def emptyspace(position):
+    return board[position] == ' '
+
+
+def win(board, letter):
+    return (board[1] == letter and board[2] == letter and board[3] == letter)or(board[4] == letter and board[5] == letter and board[6] == letter)or(board[7] == letter and board[8] == letter and board[9] == letter)or(board[1] == letter and board[4] == letter and board[7] == letter)or (board[2] == letter and board[5] == letter and board[8] == letter)or(board[3] == letter and board[6] == letter and board[9] == letter)or(board[1] == letter and board[5] == letter and board[9] == letter)or(board[3] == letter and board[5] == letter and board[7] == letter)
+
+
+def boardfull(board):
+    if board.count(' ') > 1:
         return False
+    
     else:
         return True
  
- 
-def printBoard():
-    # "board" is a list of 10 strings representing the board (ignore index 0)
-    print(\'   |   |\')
-    print(\' \' + board[1] + \' | \' + board[2] + \' | \' + board[3])
-    print(\'   |   |\')
-    print(\'-----------\')
-    print(\'   |   |\')
-    print(\' \' + board[4] + \' | \' + board[5] + \' | \' + board[6])
-    print(\'   |   |\')
-    print(\'-----------\')
-    print(\'   |   |\')
-    print(\' \' + board[7] + \' | \' + board[8] + \' | \' + board[9])
-    print(\'   |   |\')
- 
- 
-def main():
-    #Main game loop
-    print(\'Welcome to Tic Tac Toe, to win complete a straight line of your letter (Diagonal, Horizontal, Vertical). The board has positions 1-9 starting at the top left.\')
-    printBoard()
- 
-    while not(isBoardFull(board)):
-        if not(isWinner(board, \'O\')):
-            playerMove()
-            printBoard()
-        else:
-            print(\'O\\\'s win this time...\')
-            break
- 
-       
-        if not(isWinner(board, \'X\')):
-            move = compMove()
-            if move == 0:
-                print(\'Game is a Tie! No more spaces left to move.\')
+def playermove():
+    run = True
+    while run:
+        p_move = int(input("要將 " + chess[0] + " 放在哪一格? (1- 9):"))
+        if p_move > 0 and p_move < 10:
+            if emptyspace(p_move):
+                input_letter(chess[0], p_move)
+                run = False
             else:
-                insertBoard(\'O\', move)
-                print(\'Computer placed an \\\'O\\\' in position\', move, \':\')
-                printBoard()
+                print("這格子已經被佔領過了，請選擇其他未佔領的格子")
         else:
-            print(\'X\\\'s win, good job!\')
-            break
- 
- 
-    if isBoardFull(board):
-        print(\'Game is a tie! No more spaces left to move.\')
- 
-main()
- 
-while True:
-    answer = input(\'Do you want to play again? (Y/N)\')
-    if answer.lower() == \'y\' or answer.lower == \'yes\':
-        board = [\' \' for x in range(10)]
-        print(\'-----------------------------------\')
-        main()
-    else:
-        break
+            print("輸入錯誤")
+def computermove():
+    possible_move = [x for x,letter  in enumerate(board) if letter == ' ' and x != 0]
+    move = 0
+
+    for let in [chess[1],chess[0]]:
+        for i in possible_move:
+            boardcopy = board[:]
+            boardcopy[i] = let
+            if win(boardcopy,let):
+                move = i
+                return move
+
+    if 5 in possible_move:
+            move = 5
+            return move
+        
+    corner = []
+    for i in possible_move:
+        if i in[1,3,7,9]:
+            corner.append(i)
+
+        if len(corner) > 0:
+            move = random(corner)
+            return move
+    edge = []
+    for i in possible_move:
+        if i in[2,4,6,8]:
+            edge.append(i)
+
+        if len(edge) > 0:
+            move = random(edge)
+            return move
+
+def random(a):
+    import random as r
+    ln = len(a)
+    r = r.randrange(0,ln)
+    return a[r]
+        
+def main():
+    print("九宮格遊戲！")
+    printboard(board)
+    chooseOX()
+    
+        
+    
+    while boardfull(board) == False:
+        if win(board, chess[0]):
+            print('玩家勝利')
+            
+            
+        else:
+            playermove()
+            printboard(board)
+            if win(board, chess[0]):
+                print('玩家勝利')
+                break
+            if (boardfull(board)):
+                print("平手")
+                break
+
+        if win(board, chess[1]):
+            print('電腦獲勝')
+            
+        else:
+            move = computermove()
+            if move == 0:
+                print("平手")
+            else:
+                input_letter(chess[1],move)
+                print("電腦將" , chess[1] , "放在第" ,move, "格")
+                printboard(board)
+
+                if win(board, chess[1]):
+                    print('電腦獲勝')
+                    break
+                if (boardfull(board)):
+                    print("遊戲結束")
+                    break
+                
+main()       
