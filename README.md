@@ -3,15 +3,17 @@
 # 程式碼版本（vision)
   python 3.7.3
   
-# 遊玩方式(overview)
-  先決定玩家為Ｏ或Ｘ
-  玩家先手，跟電腦進行遊戲
-  
-# 遊戲設計流程（program flow）
+# 遊玩方式(how to play)
   棋盤：
   1  2  3 
   4  5  6
   7  8  9
+  
+  先決定玩家為Ｏ或Ｘ
+  玩家先手，跟電腦進行遊戲
+  
+# 遊戲設計流程（program flow）
+
   模擬下棋後的狀況
   ```
    for let in [chess[1],chess[0]]:
